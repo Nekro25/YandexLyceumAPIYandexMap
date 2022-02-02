@@ -3,6 +3,7 @@ import sys
 
 import requests
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 
 SCREEN_SIZE = [600, 450]
@@ -11,13 +12,16 @@ SCREEN_SIZE = [600, 450]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.ratio = 1
+
         self.initUI()
 
     def getImage(self):
         map_params = {
             'l': 'map',
-            'll': '10,10',
-            'spn': '1,1'
+            'll': '37.6208,55.7539',
+            'spn': f'{1 * self.ratio},{1 * self.ratio}'
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, map_params)
@@ -43,6 +47,17 @@ class Example(QWidget):
 
     def closeEvent(self, event):
         os.remove(self.map_file)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            if self.ratio / 1.5 > 0.001:
+                self.ratio /= 1.5
+        elif event.key() == Qt.Key_PageDown:
+            if self.ratio * 1.5 < 90:
+                self.ratio *= 1.5
+
+        self.getImage()
+        self.show_slide()
 
 
 if __name__ == '__main__':
