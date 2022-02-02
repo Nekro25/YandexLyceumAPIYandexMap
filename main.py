@@ -12,15 +12,15 @@ SCREEN_SIZE = [600, 450]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-
         self.ratio = 1
-
+        self.move_longitude = 0  # долгота
+        self.move_latitude = 0  # широта
         self.initUI()
 
     def getImage(self):
         map_params = {
             'l': 'map',
-            'll': '37.6208,55.7539',
+            'll': f'{37.6208 + self.move_longitude},{55.7539 + self.move_latitude}',
             'spn': f'{1 * self.ratio},{1 * self.ratio}'
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
@@ -52,10 +52,17 @@ class Example(QWidget):
         if event.key() == Qt.Key_PageUp:
             if self.ratio / 1.5 > 0.001:
                 self.ratio /= 1.5
-        elif event.key() == Qt.Key_PageDown:
+        if event.key() == Qt.Key_PageDown:
             if self.ratio * 1.5 < 90:
                 self.ratio *= 1.5
-
+        if event.key() == Qt.Key_Left:
+            self.move_longitude -= self.ratio
+        if event.key() == Qt.Key_Up:
+            self.move_latitude += self.ratio
+        if event.key() == Qt.Key_Right:
+            self.move_longitude += self.ratio
+        if event.key() == Qt.Key_Down:
+            self.move_latitude -= self.ratio
         self.getImage()
         self.show_slide()
 
