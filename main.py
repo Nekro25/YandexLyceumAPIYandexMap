@@ -102,6 +102,7 @@ class Example(QWidget):
         self.show_slide()
 
     def search_place(self):
+
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
         geocoder_params = {
@@ -110,6 +111,8 @@ class Example(QWidget):
             "format": "json"}
 
         response = requests.get(geocoder_api_server, params=geocoder_params)
+        if not response:
+            return
 
         json_response = response.json()
 
