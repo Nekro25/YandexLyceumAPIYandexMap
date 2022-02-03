@@ -66,6 +66,23 @@ class Example(QWidget):
         self.layer_hib_btn.clicked.connect(self.set_layer)
         self.layer_hib_btn.setFocusPolicy(Qt.NoFocus)
 
+        self.reset_btn = QPushButton(self)
+        self.reset_btn.move(490, 520)  # Изменить местоположение кнопки
+        self.reset_btn.resize(100, 40)
+        self.reset_btn.setText('Сброс')
+        self.reset_btn.clicked.connect(self.reset)
+        self.reset_btn.setStyleSheet("""QPushButton{
+                                                color: #021c1e;
+                                                border: 1px solid #2c7873;
+                                                border-radius: 20;
+                                            }
+                                            QPushButton:pressed{
+                                                background-color: #a6a7ad;
+                                                color: #021c1e;
+                                                border: 1px solid #2c7873;
+                                                border-radius: 20;
+                                            }""")
+
         self.search_line = QLineEdit(self)
         self.search_line.move(30, 485)
         self.search_line.resize(450, 30)
@@ -78,8 +95,8 @@ class Example(QWidget):
         self.search_line.editingFinished.connect(self.unfocus_line)
 
         self.search_button = QPushButton("Искать", self)
-        self.search_button.move(500, 479)
-        self.search_button.resize(80, 40)
+        self.search_button.move(490, 479)
+        self.search_button.resize(100, 40)
         self.search_button.clicked.connect(self.search_place)
         self.search_button.setStyleSheet("""QPushButton{
                                                 color: #021c1e;
@@ -157,7 +174,7 @@ class Example(QWidget):
     def unfocus_line(self):
         self.image.setFocus()
 
-    def set_layer(self, layer):
+    def set_layer(self):
         if self.layer_map_btn.isChecked():
             self.layer = 'map'
         elif self.layer_sat_btn.isChecked():
@@ -168,6 +185,17 @@ class Example(QWidget):
         self.getImage()
         self.show_slide()
         self.unfocus_line()
+
+    def reset(self):
+        self.ratio = 1
+        self.start_long = 37.6208
+        self.start_lat = 55.7539
+        self.layer = 'map'
+        self.point = None
+        self.layer_map_btn.setChecked(True)
+        self.search_line.setText('')
+        self.getImage()
+        self.show_slide()
 
 
 def except_hook(cls, exception, traceback):
