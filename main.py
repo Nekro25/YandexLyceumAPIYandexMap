@@ -18,17 +18,17 @@ class Example(QWidget):
         self.start_long = 37.6208
         self.start_lat = 55.7539
         self.layer = 'map'
-
+        self.point = None
         self.initUI()
 
-    def getImage(self, point=None):
+    def getImage(self):
         map_params = {
             'l': self.layer,
             'll': f'{self.start_long},{self.start_lat}',
             'spn': f'{1 * self.ratio},{1 * self.ratio}'
         }
-        if point:
-            map_params["pt"] = f"{point},pm2rdl"
+        if self.point:
+            map_params["pt"] = f"{self.point},pm2rdl"
 
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, map_params)
@@ -147,7 +147,7 @@ class Example(QWidget):
 
         self.start_long, self.start_lat = toponym_longitude, toponym_lattitude
 
-        self.getImage(point=",".join([toponym_longitude, toponym_lattitude]))
+        self.point = ",".join([toponym_longitude, toponym_lattitude])
         self.show_slide()
 
     def unfocus_line(self):
