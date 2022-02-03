@@ -51,6 +51,7 @@ class Example(QWidget):
                                           QLineEdit:hover{
                                               border: 1px solid #545454;
                                           }""")
+        self.search_line.editingFinished.connect(self.unfocus_line)
 
         self.search_button = QPushButton("Искать", self)
         self.search_button.move(500, 479)
@@ -127,6 +128,9 @@ class Example(QWidget):
 
         self.getImage(point=",".join([toponym_longitude, toponym_lattitude]))
         self.show_slide()
+
+    def unfocus_line(self):
+        self.image.setFocus()
 
 
 if __name__ == '__main__':
