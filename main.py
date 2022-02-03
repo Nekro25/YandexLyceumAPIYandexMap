@@ -50,18 +50,21 @@ class Example(QWidget):
         self.layer_map_btn.setText('Карта')
         self.layer_map_btn.setChecked(True)
         self.layer_map_btn.clicked.connect(self.set_layer)
+        self.layer_map_btn.setFocusPolicy(Qt.NoFocus)
 
         self.layer_sat_btn = QRadioButton(self)
         self.layer_sat_btn.move(260, 452)
         self.layer_sat_btn.resize(100, 30)
         self.layer_sat_btn.setText('Спутник')
         self.layer_sat_btn.clicked.connect(self.set_layer)
+        self.layer_sat_btn.setFocusPolicy(Qt.NoFocus)
 
         self.layer_hib_btn = QRadioButton(self)
         self.layer_hib_btn.move(470, 452)
         self.layer_hib_btn.resize(100, 30)
         self.layer_hib_btn.setText('Гибрид')
         self.layer_hib_btn.clicked.connect(self.set_layer)
+        self.layer_hib_btn.setFocusPolicy(Qt.NoFocus)
 
         self.search_line = QLineEdit(self)
         self.search_line.move(30, 485)
@@ -145,7 +148,7 @@ class Example(QWidget):
 
         toponym_longitude, toponym_lattitude = toponym_coordinates.split(" ")
 
-        self.start_long, self.start_lat = toponym_longitude, toponym_lattitude
+        self.start_long, self.start_lat = float(toponym_longitude), float(toponym_lattitude)
 
         self.point = ",".join([toponym_longitude, toponym_lattitude])
         self.getImage()
@@ -164,10 +167,16 @@ class Example(QWidget):
 
         self.getImage()
         self.show_slide()
+        self.unfocus_line()
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()
+    sys.excepthook = except_hook
     sys.exit(app.exec())
