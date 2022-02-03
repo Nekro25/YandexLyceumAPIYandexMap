@@ -148,6 +148,7 @@ class Example(QWidget):
         self.start_long, self.start_lat = toponym_longitude, toponym_lattitude
 
         self.point = ",".join([toponym_longitude, toponym_lattitude])
+        self.getImage()
         self.show_slide()
 
     def unfocus_line(self):
