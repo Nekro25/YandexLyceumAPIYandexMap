@@ -4,7 +4,8 @@ import sys
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, \
+    QRadioButton
 
 SCREEN_SIZE = [600, 600]
 
@@ -16,12 +17,13 @@ class Example(QWidget):
         self.ratio = 1
         self.start_long = 37.6208
         self.start_lat = 55.7539
+        self.layer = 'map'
 
         self.initUI()
 
     def getImage(self, point=None):
         map_params = {
-            'l': 'map',
+            'l': self.layer,
             'll': f'{self.start_long},{self.start_lat}',
             'spn': f'{1 * self.ratio},{1 * self.ratio}'
         }
@@ -41,6 +43,25 @@ class Example(QWidget):
         self.setStyleSheet("""background-color: #CCCDEC""")
 
         self.image = QLabel(self)
+
+        self.layer_map_btn = QRadioButton(self)
+        self.layer_map_btn.move(30, 452)
+        self.layer_map_btn.resize(100, 30)
+        self.layer_map_btn.setText('Карта')
+        self.layer_map_btn.setChecked(True)
+        self.layer_map_btn.clicked.connect(self.set_layer)
+
+        self.layer_sat_btn = QRadioButton(self)
+        self.layer_sat_btn.move(260, 452)
+        self.layer_sat_btn.resize(100, 30)
+        self.layer_sat_btn.setText('Спутник')
+        self.layer_sat_btn.clicked.connect(self.set_layer)
+
+        self.layer_hib_btn = QRadioButton(self)
+        self.layer_hib_btn.move(470, 452)
+        self.layer_hib_btn.resize(100, 30)
+        self.layer_hib_btn.setText('Гибрид')
+        self.layer_hib_btn.clicked.connect(self.set_layer)
 
         self.search_line = QLineEdit(self)
         self.search_line.move(30, 485)
@@ -131,6 +152,17 @@ class Example(QWidget):
 
     def unfocus_line(self):
         self.image.setFocus()
+
+    def set_layer(self, layer):
+        if self.layer_map_btn.isChecked():
+            self.layer = 'map'
+        elif self.layer_sat_btn.isChecked():
+            self.layer = 'sat'
+        else:
+            self.layer = 'sat,skl'
+
+        self.getImage()
+        self.show_slide()
 
 
 if __name__ == '__main__':
