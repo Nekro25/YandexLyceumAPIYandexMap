@@ -2,12 +2,13 @@ import os
 import sys
 
 import requests
+from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, \
     QRadioButton
 
-SCREEN_SIZE = [600, 600]
+SCREEN_SIZE = [600, 650]
 
 
 class Example(QWidget):
@@ -18,6 +19,7 @@ class Example(QWidget):
         self.start_long = 37.6208
         self.start_lat = 55.7539
         self.layer = 'map'
+        self.check_click_for_index = False
         self.point = None
         self.initUI()
 
@@ -43,7 +45,6 @@ class Example(QWidget):
         self.setStyleSheet("""background-color: #CCCDEC""")
 
         self.image = QLabel(self)
-
         self.layer_map_btn = QRadioButton(self)
         self.layer_map_btn.move(30, 452)
         self.layer_map_btn.resize(100, 30)
@@ -65,6 +66,23 @@ class Example(QWidget):
         self.layer_hib_btn.setText('Гибрид')
         self.layer_hib_btn.clicked.connect(self.set_layer)
         self.layer_hib_btn.setFocusPolicy(Qt.NoFocus)
+
+        self.show_index_btn = QPushButton(self)
+        self.show_index_btn.move(30, 590)
+        self.show_index_btn.resize(80, 30)
+        self.show_index_btn.setText('индекс on/off')
+        self.show_index_btn.clicked.connect(self.check_for_index)
+        self.show_index_btn.setStyleSheet("""QPushButton{
+                                                        color: #021c1e;
+                                                        border: 1px solid #2c7873;
+                                                        border-radius: 20;
+                                                    }
+                                                    QPushButton:pressed{
+                                                        background-color: #a6a7ad;
+                                                        color: #021c1e;
+                                                        border: 1px solid #2c7873;
+                                                        border-radius: 20;
+                                                    }""")
 
         self.reset_btn = QPushButton(self)
         self.reset_btn.move(490, 535)  # Изменить местоположение кнопки
@@ -128,6 +146,10 @@ class Example(QWidget):
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
 
+    def check_for_index(self):
+        self.check_click_for_index = not self.check_click_for_index
+        self.search_place()
+
     def closeEvent(self, event):
         os.remove(self.map_file)
 
@@ -174,14 +196,20 @@ class Example(QWidget):
 
         toponym_coordinates = toponym["Point"]["pos"]
         toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["Address"]["formatted"]
-
         toponym_longitude, toponym_lattitude = toponym_coordinates.split(" ")
+        try:
+            toponym_index = toponym["metaDataProperty"]["GeocoderMetaData"]["Address"]["postal_code"]
+        except Exception:
+            toponym_index = 'невозможно определить:('
 
         self.start_long, self.start_lat = float(toponym_longitude), float(toponym_lattitude)
         self.point = ",".join([toponym_longitude, toponym_lattitude])
 
-        self.output_address_line.setText(toponym_address)
-
+        if self.check_click_for_index:
+            self.output_address_line.setText(
+                f'{toponym_address}, {toponym_index}')
+        else:
+            self.output_address_line.setText(toponym_address)
         self.getImage()
         self.show_slide()
 
