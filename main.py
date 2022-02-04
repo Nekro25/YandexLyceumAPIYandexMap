@@ -67,7 +67,7 @@ class Example(QWidget):
         self.layer_hib_btn.setFocusPolicy(Qt.NoFocus)
 
         self.reset_btn = QPushButton(self)
-        self.reset_btn.move(490, 520)  # Изменить местоположение кнопки
+        self.reset_btn.move(490, 535)  # Изменить местоположение кнопки
         self.reset_btn.resize(100, 40)
         self.reset_btn.setText('Сброс')
         self.reset_btn.clicked.connect(self.reset)
@@ -93,6 +93,17 @@ class Example(QWidget):
                                               border: 1px solid #545454;
                                           }""")
         self.search_line.editingFinished.connect(self.unfocus_line)
+
+        self.output_address_line = QLineEdit(self)
+        self.output_address_line.setEnabled(False)
+        self.output_address_line.move(30, 540)
+        self.output_address_line.resize(450, 30)
+        self.output_address_line.setStyleSheet("""QLineEdit{
+                                                              border: 1px solid #2c7873;
+                                                          }
+                                                          QLineEdit:hover{
+                                                              border: 1px solid #545454;
+                                                          }""")
 
         self.search_button = QPushButton("Искать", self)
         self.search_button.move(490, 479)
@@ -162,12 +173,15 @@ class Example(QWidget):
             "featureMember"][0]["GeoObject"]
 
         toponym_coordinates = toponym["Point"]["pos"]
+        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["Address"]["formatted"]
 
         toponym_longitude, toponym_lattitude = toponym_coordinates.split(" ")
 
         self.start_long, self.start_lat = float(toponym_longitude), float(toponym_lattitude)
-
         self.point = ",".join([toponym_longitude, toponym_lattitude])
+
+        self.output_address_line.setText(toponym_address)
+
         self.getImage()
         self.show_slide()
 
@@ -194,6 +208,7 @@ class Example(QWidget):
         self.point = None
         self.layer_map_btn.setChecked(True)
         self.search_line.setText('')
+        self.output_address_line.setText('')
         self.getImage()
         self.show_slide()
 
