@@ -176,6 +176,10 @@ class Example(QWidget):
         self.getImage()
         self.show_slide()
 
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            print(event.pos())
+
     def search_place(self):
 
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
